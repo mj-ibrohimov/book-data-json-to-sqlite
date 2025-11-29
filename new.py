@@ -2,7 +2,7 @@ import re
 import json
 import sqlite3
 
-with open("task1/task1_d.json", "r", encoding="utf-8") as f:
+with open("task1_d.json", "r", encoding="utf-8") as f:
     raw = f.read()
 
 # ruby syntax to json
@@ -26,7 +26,7 @@ c = conn.cursor()
 # Create main books table
 c.execute("""
 CREATE TABLE IF NOT EXISTS books (
-    id TEXT,
+    id TEXT PRIMARY KEY,
     title TEXT,
     author TEXT,
     genre TEXT,
@@ -51,7 +51,7 @@ for book in data:
     
     #quoting confusion, 
     c.execute("""
-    INSERT INTO books (id, title, author, genre, publisher, year, price, currency)
+    INSERT OR REPLACE INTO books (id, title, author, genre, publisher, year, price, currency)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
     """, (str(book.get("id")), book.get("title"), book.get("author"),
           book.get("genre"), book.get("publisher"),
@@ -79,7 +79,7 @@ ORDER BY year
 conn.commit()
 
 # Save summary table as plain text
-with open("task1/summary_output.txt", "w", encoding="utf-8") as f:
+with open("summary_output.txt", "w", encoding="utf-8") as f:
     f.write("publication_year | book_count | average_price\n")
     f.write("---------------------------------------------\n")
     for row in c.execute("SELECT * FROM summary"):
